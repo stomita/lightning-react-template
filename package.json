@@ -1,22 +1,24 @@
 {
-  "name": "auradev",
+  "name": "lightning-react-template",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "A template project to create lightning app with React",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Shinichi Tomita <shinichi.tomita@gmail.com>",
+  "license": "MIT",
   "dependencies": {
-    "browserify": "^7.0.3",
+    "babelify": "^6.0.1",
+    "browserify": "^7.1.0",
     "coffee-script": "^1.8.0",
     "coffeeify": "^1.0.0",
     "gulp": "^3.8.10",
+    "gulp-jsforce-deploy": "^1.0.0",
+    "gulp-notify": "^2.2.0",
     "gulp-zip": "^2.0.2",
     "lodash": "^2.4.1",
-    "through2": "^0.6.3",
-    "vinyl-source-stream": "^1.0.0"
+    "react": "^0.13.1",
+    "vinyl-source-stream": "^1.1.0"
   },
   "browserify": {
     "transform": [

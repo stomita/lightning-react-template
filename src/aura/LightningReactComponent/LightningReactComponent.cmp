@@ -1,0 +1,22 @@
+<aura:component implements="flexipage:availableForAllPageTypes">
+  <!-- attributes passed to React property -->
+  <aura:attribute name="sobjects" type="string[]" default="Account,Contact"/>
+  <aura:attribute name="records" type="sobject[]" />
+
+  <!-- controlling attribute to enforce refresh -->
+  <aura:attribute name="_refresh_timestamp_" type="integer" default="0" />
+
+  <!-- loading outer scripts to render React tree -->
+  <ltng:require scripts="/resource/LightningReactComponentJS" afterScriptsLoaded="{!c.refresh}" />
+
+  <!-- subscribe data changes to react rendering -->
+  <aura:handler name="change" value="{!v.sobjects}" action="{!c.refresh}" />
+  <aura:handler name="change" value="{!v.records}" action="{!c.refresh}" />
+
+  <!-- component event fired from React -->
+  <aura:registerEvent name="select" type="c:LightningReactRecordEvent" />
+
+  <!-- root DOM of React tree -->
+  <div data-last-refreshed="{!v._refresh_timestamp_}"></div>
+
+</aura:component>
