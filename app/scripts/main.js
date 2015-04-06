@@ -1,91 +1,44 @@
 var React = require('react');
 var _ = require("lodash");
 
-var RecordList = React.createClass({
-  propTypes: {
-    sobjects: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
-    records: React.PropTypes.arrayOf(
-      React.PropTypes.shape({
-        Id: React.PropTypes.string.isRequired,
-        Name: React.PropTypes.string.isRequired
-      })
-    ),
-    onSelectTable: React.PropTypes.func,
-    onSelectRecord: React.PropTypes.func
-  },
-
-  getDefaultProps: function() {
-    return {
-      sobjects: [],
-      records: [],
-    };
-  },
-
-  onSelectTable: function(e) {
-    if (this.props.onSelectTable) {
-      var table = e.target.value;
-      this.props.onSelectTable(table);
-    }
-  },
-
-  onSelectRecord: function(record) {
-    if (this.props.onSelectRecord) {
-      this.props.onSelectRecord(record);
-    }
-  },
-
-  render: function() {
-    var options = this.props.sobjects.map(function(sobject) {
-      return <option value={ sobject }>{ sobject }</option>
-    });
-    return (
-      <div>
-        Table :
-        <select onChange={ this.onSelectTable }>
-          <option value=""></option>
-          { options }
-        </select>
-        <ul>
-          {
-            this.props.records.map(function(rec) {
-              return (
-                <li key={ rec.Id }>
-                   <a href="javascript:void(0)" onClick={ this.onSelectRecord.bind(this, rec) }>{ rec.Name }</a>
-                </li>
-              );
-            }, this)
-          }
-        </ul>
-      </div>
-    );
-  }
-});
+var RecordList = require('./components/record-list');
 
 /**
- *
+ * A bridge instance which has 'render' call to receive from
  */
 module.exports = createReactLightningBridge(RecordList, {
+  // Mapping Lightning attributes to React component's property name
+  // By default, all attributes defined Lightning component are applied to property with same name
   /*
   attributes: {
     sobjects: "sobjects",
     records: "records"
   },
   */
+  // Mapping Lightning event to React component's handler function
   events: {
     select: "onSelectRecord"
   },
+
+  // Action functions
   actions: {
+    // 1st handler argument is bound to lightning component
     onSelectTable: function(cmp, table) {
       if (!table) {
         cmp.set('v.records', [])
       } else {
-        var records = new Array(51).join('_').split('').map(function(a, i) {
-          return {
-            Id: String(10001+i),
-            Name: table + ' ' + (i+1)
-          };
+        var action = cmp.get('c.queryRecords');
+        action.setParams({ table: table });
+        action.setCallback(this, function(response) {
+          var state = response.getState();
+          if (state === 'SUCCESS') {
+            cmp.set('v.records', response.getReturnValue());
+          } else if (state === 'ERROR') {
+            errors[0] && errors[0].message
+            $A.error("Error message: " + errors[0].message);
+          }
         });
-        cmp.set('v.records', records);
+        $A.enqueueAction(action);
       }
     }
   }
@@ -144,8 +97,6 @@ function createReactLightningBridge(Component, config) {
           }
         }
       }
-
-      console.log("props = ", props);
 
       React.render(<Component {...props} />, cmp.getElement());
     }
