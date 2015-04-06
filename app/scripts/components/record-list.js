@@ -2,7 +2,11 @@
  *
  */
 var React = require('react');
+var _ = require('lodash');
 
+/**
+ *
+ */
 var RecordList = React.createClass({
   propTypes: {
     sobjects: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
@@ -62,3 +66,5 @@ var RecordList = React.createClass({
     );
   }
 });
+
+module.exports = RecordList;
