@@ -37,8 +37,9 @@ module.exports = LightningReactBridge.create(RecordList, {
           if (state === 'SUCCESS') {
             cmp.set('v.records', response.getReturnValue());
           } else if (state === 'ERROR') {
-            errors[0] && errors[0].message;
-            $A.error('Error message: ' + errors[0].message);
+            if (errors[0] && errors[0].message) {
+              $A.error('Error message: ' + errors[0].message);
+            }
           }
         });
         $A.enqueueAction(action);
